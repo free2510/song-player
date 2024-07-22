@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Audio Player</title>
+</head>
+<body>
+    <h1>YouTube Audio Player</h1>
+    <audio id="audioPlayer" controls autoplay></audio>
+
+    <script>
+        async function getYouTubeAudioUrl(youtubeUrl) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/youtube?url=${encodeURIComponent(youtubeUrl)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch audio URL');
+                }
+
+                const data = await response.json();
+                return data.audioUrl;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error playing YouTube audio');
+            }
+        }
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        async function playYouTubeAudio() {
+            const youtubeUrl = getQueryParam('url-song');
+            if (!youtubeUrl) {
+                alert('YouTube URL not provided in the query parameters');
+                return;
+            }
+
+            const audioUrl = await getYouTubeAudioUrl(youtubeUrl);
+            if (audioUrl) {
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+            }
+        }
+
+        // Execute the function to play the audio
+        playYouTubeAudio();
+    </script>
+</body>
+</html>
