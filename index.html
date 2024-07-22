@@ -3,50 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Audio Player</title>
+    <title>YouTube Video Player</title>
+    <style>
+        #player {
+            width: 100%;
+            height: 500px;
+        }
+    </style>
 </head>
 <body>
-    <h1>YouTube Audio Player</h1>
-    <audio id="audioPlayer" controls autoplay></audio>
+    <h1>YouTube Video Player</h1>
+    <div id="player"></div>
 
     <script>
-        async function getYouTubeAudioUrl(youtubeUrl) {
-            try {
-                const response = await fetch(`http://localhost:3000/api/youtube?url=${encodeURIComponent(youtubeUrl)}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch audio URL');
-                }
+        // Load the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-                const data = await response.json();
-                return data.audioUrl;
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error playing YouTube audio');
-            }
-        }
-
-        function getQueryParam(param) {
+        // Create an <iframe> (and YouTube player) after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            // Get the video URL from the query parameters
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
+            const videoId = urlParams.get('url-song');
 
-        async function playYouTubeAudio() {
-            const youtubeUrl = getQueryParam('url-song');
-            if (!youtubeUrl) {
-                alert('YouTube URL not provided in the query parameters');
+            if (!videoId) {
+                alert('No video URL provided in query parameters');
                 return;
             }
 
-            const audioUrl = await getYouTubeAudioUrl(youtubeUrl);
-            if (audioUrl) {
-                const audioPlayer = document.getElementById('audioPlayer');
-                audioPlayer.src = audioUrl;
-                audioPlayer.play();
+            // Extract the video ID from the URL
+            const videoIdMatch = videoId.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            const id = videoIdMatch ? videoIdMatch[1] : null;
+
+            if (!id) {
+                alert('Invalid YouTube URL');
+                return;
             }
+
+            // Create the YouTube player
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: id,
+                playerVars: {
+                    'autoplay': 1, // Auto-play the video
+                    'controls': 1 // Show video controls
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
         }
 
-        // Execute the function to play the audio
-        playYouTubeAudio();
+        // The API will call this function when the video player is ready.
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
     </script>
 </body>
 </html>
