@@ -27,18 +27,18 @@
         function onYouTubeIframeAPIReady() {
             // Get the video URL from the query parameters
             const urlParams = new URLSearchParams(window.location.search);
-            const videoId = urlParams.get('url-song');
+            const videoUrl = urlParams.get('url-song');
 
-            if (!videoId) {
+            if (!videoUrl) {
                 alert('No video URL provided in query parameters');
                 return;
             }
 
             // Extract the video ID from the URL
-            const videoIdMatch = videoId.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-            const id = videoIdMatch ? videoIdMatch[1] : null;
+            const videoIdMatch = videoUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            const videoId = videoIdMatch ? videoIdMatch[1] : null;
 
-            if (!id) {
+            if (!videoId) {
                 alert('Invalid YouTube URL');
                 return;
             }
@@ -47,10 +47,11 @@
             player = new YT.Player('player', {
                 height: '390',
                 width: '640',
-                videoId: id,
+                videoId: videoId,
                 playerVars: {
                     'autoplay': 1, // Auto-play the video
-                    'controls': 1 // Show video controls
+                    'controls': 1, // Show video controls
+                    'playsinline': 1 // Ensure the video plays inline on mobile devices
                 },
                 events: {
                     'onReady': onPlayerReady
@@ -60,7 +61,7 @@
 
         // The API will call this function when the video player is ready.
         function onPlayerReady(event) {
-            event.target.playVideo();
+            event.target.playVideo(); // Play the video when player is ready
         }
     </script>
 </body>
