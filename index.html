@@ -8,6 +8,9 @@
         #player {
             width: 100%;
             height: 100vh; /* Full height of the viewport */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -51,7 +54,8 @@
                     'autoplay': 1, // Auto-play the video
                     'controls': 1, // Show video controls
                     'playsinline': 1, // Ensure the video plays inline on mobile devices
-                    'origin': window.location.origin // Ensure proper playback across domains
+                    'origin': window.location.origin, // Ensure proper playback across domains
+                    'mute': 1 // Start muted to increase chances of autoplay
                 },
                 events: {
                     'onReady': onPlayerReady
