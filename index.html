@@ -13,16 +13,16 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        audio {
-            width: 80%;
+        #player {
+            display: none; /* Hide the player container */
         }
     </style>
 </head>
 <body>
-    <audio id="audioPlayer" controls autoplay></audio>
+    <div id="player"></div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        function onYouTubeIframeAPIReady() {
             const urlParams = new URLSearchParams(window.location.search);
             const videoUrl = urlParams.get('url-song');
 
@@ -39,44 +39,32 @@
                 return;
             }
 
-            const audioPlayer = document.getElementById('audioPlayer');
+            new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'mute': 1,
+                    'vq': 'small' // Set to 'small' for 144p quality
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
 
-            const proxyUrl = 'https://api.allorigins.win/raw?url=';
-            const targetUrl = `https://www.youtube.com/get_video_info?video_id=${videoId}`;
+            function onPlayerReady(event) {
+                // Optionally handle the player ready event
+                event.target.playVideo();
+            }
+        }
 
-            fetch(proxyUrl + encodeURIComponent(targetUrl))
-                .then(response => response.text())
-                .then(data => {
-                    // Log data to see its structure
-                    console.log('Fetched Data:', data);
-
-                    const params = new URLSearchParams(data);
-                    if (!params.has('player_response')) {
-                        throw new Error('Failed to retrieve player response');
-                    }
-
-                    const playerResponse = JSON.parse(params.get('player_response'));
-                    if (!playerResponse.streamingData) {
-                        throw new Error('No streaming data found');
-                    }
-
-                    const formats = playerResponse.streamingData.adaptiveFormats;
-
-                    // Filter for audio-only formats
-                    const audioFormats = formats.filter(format => format.mimeType.includes('audio/mp4'));
-
-                    if (audioFormats.length > 0) {
-                        audioPlayer.src = audioFormats[0].url;
-                        audioPlayer.play();
-                    } else {
-                        alert('No audio format found');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching video info:', error);
-                    alert('Error fetching video info: ' + error.message);
-                });
-        });
+        // Load the IFrame Player API code asynchronously
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     </script>
 </body>
 </html>
