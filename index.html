@@ -46,7 +46,7 @@
                 .then(data => {
                     const params = new URLSearchParams(data);
                     const playerResponse = JSON.parse(params.get('player_response'));
-                    const formats = playerResponse.streamingData.formats;
+                    const formats = playerResponse.streamingData.adaptiveFormats;
 
                     // Filter for audio only formats
                     const audioFormats = formats.filter(format => format.mimeType.includes('audio/mp4'));
