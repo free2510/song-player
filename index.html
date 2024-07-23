@@ -41,7 +41,10 @@
 
             const audioPlayer = document.getElementById('audioPlayer');
 
-            fetch(`https://www.youtube.com/get_video_info?video_id=${videoId}`)
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = `https://www.youtube.com/get_video_info?video_id=${videoId}`;
+
+            fetch(proxyUrl + targetUrl)
                 .then(response => response.text())
                 .then(data => {
                     const params = new URLSearchParams(data);
