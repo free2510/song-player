@@ -41,13 +41,14 @@
 
             const audioPlayer = document.getElementById('audioPlayer');
 
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
             const targetUrl = `https://www.youtube.com/get_video_info?video_id=${videoId}`;
 
-            fetch(proxyUrl + targetUrl)
-                .then(response => response.text())
+            fetch(proxyUrl + encodeURIComponent(targetUrl))
+                .then(response => response.json())
                 .then(data => {
-                    const params = new URLSearchParams(data);
+                    const videoInfo = data.contents;
+                    const params = new URLSearchParams(videoInfo);
                     if (!params.has('player_response')) {
                         throw new Error('Failed to retrieve player response');
                     }
