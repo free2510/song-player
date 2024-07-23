@@ -32,8 +32,8 @@
                 return;
             }
 
-            // Parse SoundCloud track ID from the URL
-            const trackIdMatch = trackUrl.match(/soundcloud\.com\/tracks\/(\d+)/);
+            // Extract track ID from the URL
+            const trackIdMatch = trackUrl.match(/soundcloud\.com\/[^\/]+\/([^?\/]+)/);
             const trackId = trackIdMatch ? trackIdMatch[1] : null;
 
             if (!trackId) {
