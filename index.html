@@ -41,7 +41,7 @@
 
             const audioPlayer = document.getElementById('audioPlayer');
 
-            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=';
             const targetUrl = `https://www.youtube.com/get_video_info?video_id=${videoId}`;
 
             fetch(proxyUrl + encodeURIComponent(targetUrl))
@@ -70,7 +70,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching video info:', error);
-                    alert('Error fetching video info');
+                    alert('Error fetching video info: ' + error.message);
                 });
         });
     </script>
