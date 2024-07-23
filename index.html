@@ -41,24 +41,28 @@
 
             const audioPlayer = document.getElementById('audioPlayer');
 
-            const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=';
+            const proxyUrl = 'https://api.allorigins.win/raw?url=';
             const targetUrl = `https://www.youtube.com/get_video_info?video_id=${videoId}`;
 
             fetch(proxyUrl + encodeURIComponent(targetUrl))
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(data => {
-                    const videoInfo = data.contents;
-                    const params = new URLSearchParams(videoInfo);
+                    // Log data to see its structure
+                    console.log('Fetched Data:', data);
+
+                    const params = new URLSearchParams(data);
                     if (!params.has('player_response')) {
                         throw new Error('Failed to retrieve player response');
                     }
+
                     const playerResponse = JSON.parse(params.get('player_response'));
                     if (!playerResponse.streamingData) {
                         throw new Error('No streaming data found');
                     }
+
                     const formats = playerResponse.streamingData.adaptiveFormats;
 
-                    // Filter for audio only formats
+                    // Filter for audio-only formats
                     const audioFormats = formats.filter(format => format.mimeType.includes('audio/mp4'));
 
                     if (audioFormats.length > 0) {
