@@ -45,7 +45,13 @@
                 .then(response => response.text())
                 .then(data => {
                     const params = new URLSearchParams(data);
+                    if (!params.has('player_response')) {
+                        throw new Error('Failed to retrieve player response');
+                    }
                     const playerResponse = JSON.parse(params.get('player_response'));
+                    if (!playerResponse.streamingData) {
+                        throw new Error('No streaming data found');
+                    }
                     const formats = playerResponse.streamingData.adaptiveFormats;
 
                     // Filter for audio only formats
